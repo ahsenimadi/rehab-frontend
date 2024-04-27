@@ -1,7 +1,31 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import logo from '../assets/images/logo_white.png';
+import LiveChatWidget from './LiveChatWidget';
 
 const Footer = () => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    function handleScroll() {
+      if (window.scrollY > 100) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
   return (
     <>
       <div className="bg-primary-subtle">
@@ -57,21 +81,21 @@ const Footer = () => {
                 <img src={logo} className='logo mb-3' alt="logo" />
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officia voluptas excepturi corrupti enim quam facere soluta aut, provident odit nostrum maiores saepe facilis blanditiis aliquam ipsa. Non optio modi animi?</p>
                 <ul className="nav">
-                    <li className="nav-item">
-                        <a className="nav-link" href="#"><i className="fa-brands fa-square-facebook"></i></a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="#"><i className="fa-brands fa-square-instagram"></i></a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="#"><i className="fa-brands fa-linkedin"></i></a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="#"><i className="fa-brands fa-square-x-twitter"></i></a>
-                    </li>
+                  <li className="nav-item">
+                    <a className="nav-link" href="#"><i className="fa-brands fa-square-facebook"></i></a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link" href="#"><i className="fa-brands fa-square-instagram"></i></a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link" href="#"><i className="fa-brands fa-linkedin"></i></a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link" href="#"><i className="fa-brands fa-square-x-twitter"></i></a>
+                  </li>
                 </ul>
               </div>
-              <div className="col-md-3">
+              <div className="col-6 col-md-3">
                 <h5 className='mb-3'>Company</h5>
                 <ul className="nav flex-column menu">
                   <li className="nav-item">
@@ -91,7 +115,7 @@ const Footer = () => {
                   </li>
                 </ul>
               </div>
-              <div className="col-md-3">
+              <div className="col-6 col-md-3">
                 <h5 className='mb-3'>Services</h5>
                 <ul className="nav flex-column menu">
                   <li className="nav-item">
@@ -129,25 +153,30 @@ const Footer = () => {
                 <p className='mb-0'>Copyright © 2024 PP Reddy Rehab Care. All rights reserved.</p>
               </div>
               <div className="col-md-6 my-auto">
-                <ul className="nav justify-content-end">
-                    <li className="nav-item">
-                        <a className="nav-link" href="#"><i className="fa-brands fa-square-facebook"></i></a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="#"><i className="fa-brands fa-square-instagram"></i></a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="#"><i className="fa-brands fa-linkedin"></i></a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="#"><i className="fa-brands fa-square-x-twitter"></i></a>
-                    </li>
+                <ul className="nav justify-content-start justify-content-md-end">
+                  <li className="nav-item">
+                    <a className="nav-link" href="#"><i className="fa-brands fa-square-facebook"></i></a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link" href="#"><i className="fa-brands fa-square-instagram"></i></a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link" href="#"><i className="fa-brands fa-linkedin"></i></a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link" href="#"><i className="fa-brands fa-square-x-twitter"></i></a>
+                  </li>
                 </ul>
               </div>
             </div>
           </div>
         </div>
       </footer>
+      <div className={`back-to-top ${isVisible ? 'visible' : ''}`} onClick={scrollToTop}>
+        <i className="fa-solid fa-up-long"></i>
+      </div>
+      <LiveChatWidget />
+
     </>
   )
 }

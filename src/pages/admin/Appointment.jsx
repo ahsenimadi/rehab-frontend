@@ -34,30 +34,34 @@ const Appointment = () => {
                             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                                 <h1 className="h2">Appointments lead list</h1>
                             </div>
-                            <table className="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Mobile</th>
-                                        <th>Service</th>
-                                        <th>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {appointments.map((item, index) => (
-                                        <tr key={index}>
-                                            <td>{index + 1}</td>
-                                            <td>{item.name}</td>
-                                            <td>{item.email}</td>
-                                            <td>{item.mobile}</td>
-                                            <td>{item.service}</td>
-                                            <td>{item.posted_date}</td>
+                            {appointments.length === 0 ? (
+                                <div className="alert alert-info">No data found yet</div>
+                            ) : (
+                                <table className="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Mobile</th>
+                                            <th>Service</th>
+                                            <th>Date</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {appointments.map((item, index) => (
+                                            <tr key={index}>
+                                                <td>{index + 1}</td>
+                                                <td>{item.name}</td>
+                                                <td>{item.email}</td>
+                                                <td>{item.mobile}</td>
+                                                <td>{item.service}</td>
+                                                <td>{item.posted_date}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
                         </main>
                     </div>
                 </div>
