@@ -5,9 +5,11 @@ import ENV from '../config.json';
 import Preloader from '../components/Preloader';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import MetaTags from '../components/MetaTags';
 
 const Blogs = () => {
     const api = ENV.BASE_URL
+    const [meta, setMeta] = useState([]);
     const [loading, setLoading] = useState(true)
     const [blogs, setBlogs] = useState()
     useEffect(() => {
@@ -25,6 +27,17 @@ const Blogs = () => {
         };
 
         fetchBlogs();
+
+        const fetchMeta = async () => {
+            try {
+                const response = await axios.get(api + 'meta/page/blogs')
+                setMeta(response.data)
+            } catch (error) {
+                console.log("Error fetching meta:" + error)
+            }
+        }
+
+        fetchMeta()
     }, [])
 
     function stripHtmlTags(html) {
@@ -35,6 +48,7 @@ const Blogs = () => {
 
     return (
         <>
+            <MetaTags meta={meta} />
             {loading ? <Preloader /> : (
                 <>
                     <Header />

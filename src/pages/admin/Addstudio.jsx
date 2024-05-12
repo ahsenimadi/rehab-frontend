@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import axios from 'axios';
@@ -8,8 +8,8 @@ import AdminSidebar from '../../components/AdminSidebar';
 import AdminFooter from '../../components/AdminFooter';
 import ENV from '../../config.json';
 
-const Addservice = () => {
-    const api = ENV.BASE_URL;
+const AddStudio = () => {
+    const api = ENV.BASE_URL + 'studios/create';
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -17,13 +17,10 @@ const Addservice = () => {
         description: '',
         short: '',
         image: null,
-        thumbnail: null,
-        icon: '',
         meta_title: '',
         meta_description: '',
         meta_keywords: ''
     });
-    const [icons, setIcons] = useState([])
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,52 +31,35 @@ const Addservice = () => {
     };
 
     const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            function slugify(title) {
-                return title.toLowerCase().replace(/\s+/g, '-');
-            }
             const form = new FormData();
             form.append('title', formData.title);
             form.append('description', formData.description);
             form.append('short', formData.short);
             form.append('image', formData.image);
-            form.append('thumbnail', formData.thumbnail);
-            form.append('icon', formData.icon);
             form.append('slug', slugify(formData.title));
             form.append('meta_title', formData.meta_title);
             form.append('meta_description', formData.meta_description);
             form.append('meta_keywords', formData.meta_keywords);
-            if (service.image) {
-                formData.append('image', service.image);
-            }
-            if (service.thumbnail) {
-                formData.append('thumbnail', service.thumbnail);
-            }
-            await axios.post(`${api}/services/create`, form);
-            setSuccessMessage('Service created successfully');
+
+            await axios.post(api, form);
+            setSuccessMessage('Studio created successfully');
             setTimeout(() => {
-                navigate('/admin/services');
+                navigate('/admin/studios');
             }, 2000);
         } catch (error) {
-            console.error('Error submitting service:', error);
+            console.error('Error submitting studio:', error);
+            setErrorMessage('Failed to submit studio');
         }
     };
-    useEffect(() => {
-        const fetchIcon = async () => {
-            try {
-                const response = await axios.get(api + 'icons/');
-                setIcons(response.data);
-            } catch (error) {
-                console.log("Error fetching icon:" + error);
-            }
-        };
 
-        fetchIcon();
-
-    }, [])
+    const slugify = (title) => {
+        return title.toLowerCase().replace(/\s+/g, '-');
+    };
 
     return (
         <div>
@@ -89,10 +69,11 @@ const Addservice = () => {
                     <AdminSidebar />
                     <main className='col-md ms-sm-auto px-md-4'>
                         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                            <h1 className="h2">Add Service</h1>
+                            <h1 className="h2">Add Studio</h1>
                         </div>
                         <div className="card">
                             <div className="card-body">
+                                {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
                                 <form onSubmit={handleSubmit} encType='multipart/form-data'>
                                     <div className="form-group mb-3">
                                         <label>Title</label>
@@ -106,27 +87,9 @@ const Addservice = () => {
                                         <label>Description</label>
                                         <CKEditor editor={ClassicEditor} name='description' data={formData.description} onChange={(event, editor) => { const data = editor.getData(); setFormData({ ...formData, description: data }); }} />
                                     </div>
-                                    <div className="row">
-                                        <div className="col-md-6">
-                                            <div className="form-group mb-3">
-                                                <label>Image</label>
-                                                <input type="file" className="form-control" name='image' accept='.png, .jpg, .jpeg' onChange={handlePhoto} />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group mb-3">
-                                                <label>Thumbnail icon</label>
-                                                <select name="icon" className='form-control'>
-                                                    <option value="">Select icon</option>
-                                                    {icons.map((item, index) => {
-                                                        return (
-                                                            <option value={item._id} key={index}>{item.name}</option>
-                                                        );
-                                                    })}
-
-                                                </select>
-                                            </div>
-                                        </div>
+                                    <div className="form-group mb-3">
+                                        <label>Image</label>
+                                        <input type="file" className="form-control" name='image' accept='.png, .jpg, .jpeg' onChange={handlePhoto} />
                                     </div>
                                     <hr />
                                     <h4>SEO meta tags</h4>
@@ -155,4 +118,4 @@ const Addservice = () => {
     )
 }
 
-export default Addservice
+export default AddStudio;

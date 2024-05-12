@@ -6,7 +6,9 @@ import ENV from '../config.json'
 
 const Header = () => {
     const [services, setservices] = useState([])
-    const [servicesOpen, setServicesOpen] = useState(false); // State to manage services dropdown visibility
+    const [servicesOpen, setServicesOpen] = useState(false);
+    const [studios, setstudios] = useState([])
+    const [studiosOpen, setStudiosOpen] = useState(false);
     const [galleryOpen, setGalleryOpen] = useState(false);
     const api = ENV.BASE_URL
 
@@ -21,6 +23,16 @@ const Header = () => {
         };
 
         fetchServices();
+        const fetchStudios = async () => {
+            try {
+                const response = await axios.get(api + 'studios');
+                setstudios(response.data);
+            } catch (error) {
+                console.log("Error fetching studio:" + error);
+            }
+        };
+
+        fetchStudios();
 
     }, [])
 
@@ -28,7 +40,7 @@ const Header = () => {
         <>
             <div className="scroll-watcher"></div>
             <div className="bg-first bg-gradient">
-                <div className="container">
+                <div className="container-fluid">
                     <div className="row">
                         <div className="col-md-6">
                             <ul className="nav">
@@ -60,7 +72,7 @@ const Header = () => {
                 </div>
             </div>
             <nav className="navbar navbar-expand-lg bg-white shadow-sm sticky-top navbar-main py-0">
-                <div className="container">
+                <div className="container-fluid">
                     <NavLink className="navbar-brand py-0" to="/">
                         <img src={logo} className='logo' alt="logo" />
                     </NavLink>
@@ -76,7 +88,7 @@ const Header = () => {
                                 <NavLink className="nav-link text-uppercase fw-semibold py-3 px-4" to="/about" activeclassname="active">About</NavLink>
                             </li>
                             <li className="nav-item">
-                                <NavLink className="nav-link text-uppercase fw-semibold py-3 px-4" to="facilities" activeclassname="active">Facilities</NavLink>
+                                <NavLink className="nav-link text-uppercase fw-semibold py-3 px-4" to="/facilities" activeclassname="active">Facilities</NavLink>
                             </li>
                             <li className="nav-item dropdown" onMouseEnter={() => setServicesOpen(true)} onMouseLeave={() => setServicesOpen(false)}>
                                 <NavLink className="nav-link text-uppercase fw-semibold py-3 px-4 dropdown-toggle" to="/services" role="button" aria-expanded={servicesOpen ? "true" : "false"}>
@@ -88,13 +100,23 @@ const Header = () => {
                                     ))}
                                 </ul>
                             </li>
+                            <li className="nav-item dropdown" onMouseEnter={() => setStudiosOpen(true)} onMouseLeave={() => setStudiosOpen(false)}>
+                                <NavLink className="nav-link text-uppercase fw-semibold py-3 px-4 dropdown-toggle" to="/studios" role="button" aria-expanded={studiosOpen ? "true" : "false"}>
+                                    Studios
+                                </NavLink>
+                                <ul className={`dropdown-menu ${studiosOpen ? 'show' : ''}`} onMouseEnter={() => setStudiosOpen(true)} onMouseLeave={() => setStudiosOpen(false)}>
+                                    {studios.map((item, index) => (
+                                        <li key={index}><NavLink className="dropdown-item" to={`/studios/${item.slug}`} key={index}>{item.title}</NavLink></li>
+                                    ))}
+                                </ul>
+                            </li>
                             <li className="nav-item dropdown" onMouseEnter={() => setGalleryOpen(true)} onMouseLeave={() => setGalleryOpen(false)}>
                                 <a className="nav-link text-uppercase fw-semibold py-3 px-4 dropdown-toggle" href="#" role="button" aria-expanded={galleryOpen ? "true" : "false"}>
                                     Gallery
                                 </a>
                                 <ul className={`dropdown-menu ${galleryOpen ? 'show' : ''}`} onMouseEnter={() => setGalleryOpen(true)} onMouseLeave={() => setGalleryOpen(false)}>
-                                    <li><a className="dropdown-item" href="#">Images Gallery</a></li>
-                                    <li><a className="dropdown-item" href="#">Videos Gallery</a></li>
+                                    <li><NavLink className="dropdown-item" to="/gallery">Images Gallery</NavLink></li>
+                                    <li><NavLink className="dropdown-item" to="/video">Videos Gallery</NavLink></li>
                                 </ul>
                             </li>
                             <li className="nav-item">

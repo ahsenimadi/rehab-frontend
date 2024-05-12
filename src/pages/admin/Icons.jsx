@@ -6,36 +6,35 @@ import AdminSidebar from '../../components/AdminSidebar';
 import AdminFooter from '../../components/AdminFooter';
 import ENV from '../../config.json';
 
-const Blogs = () => {
-    const [blogs, setBlogs] = useState([]);
+const Icons = () => {
+    const [icons, setIcons] = useState([]);
     const [successMessage, setSuccessMessage] = useState('');
-    const api = ENV.BASE_URL + 'blogs';
+    const api = ENV.BASE_URL + 'icons';
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchBlogs = async () => {
+        const fetchIcons = async () => {
             try {
                 const response = await axios.get(api);
-                setBlogs(response.data);
+                setIcons(response.data);
             } catch (error) {
-                console.log('Error fetching blogs:', error);
+                console.log('Error fetching icons:', error);
             }
         };
 
-        fetchBlogs();
+        fetchIcons();
     }, [api]);
 
-    const handleDelete = async (slug) => {
+    const handleDelete = async (_id) => {
         try {
-            await axios.delete(api + '/' + slug);
-            setSuccessMessage('Blog deleted successfully');
+            await axios.delete(api + '/' + id);
+            setSuccessMessage('Icon deleted successfully');
             setTimeout(() => {
-                // navigate('/admin/blogs');
                 location.reload()
                 setSuccessMessage('')
             }, 2000);
         } catch (error) {
-            console.log("Error deleting blog: " + error);
+            console.log("Error deleting icon: " + error);
         }
     };
 
@@ -48,34 +47,30 @@ const Blogs = () => {
                         <AdminSidebar />
                         <main className="col-md ms-sm-auto px-md-4">
                             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                                <h1 className="h2">Blogs list</h1>
+                                <h1 className="h2">Icons list</h1>
                             </div>
                             {successMessage && <div className="alert alert-success mt-3">{successMessage}</div>}
-                            {blogs.length === 0 ? (
+                            {icons.length === 0 ? (
                                 <div className="alert alert-info">No data found yet</div>
                             ) : (
                                 <table className="table table-bordered">
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Title</th>
-                                            <th>Description</th>
+                                            <th>Name</th>
                                             <th>Image</th>
-                                            <th>Posted date</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {blogs.map((item, index) => (
+                                        {icons.map((item, index) => (
                                             <tr key={index}>
                                                 <td>{index + 1}</td>
-                                                <td>{item.title}</td>
-                                                <td>{item.description.slice(0, 49)}</td>
+                                                <td>{item.name}</td>
                                                 <td><img src={ENV.BASE_URL + item.image} alt="" width='100px' /></td>
-                                                <td>{item.posted_date}</td>
                                                 <td>
-                                                    <Link to={`/admin/blogs/edit/${item.slug}`} className="btn btn-info btn-sm me-1"><i className="fa fa-pencil"></i> Edit</Link>
-                                                    <button className="btn btn-danger btn-sm me-1" onClick={() => handleDelete(item.slug)}><i className="fa fa-trash"></i> Delete</button>
+                                                    <Link to={`/admin/icons/edit/${item._id}`} className="btn btn-info btn-sm me-1"><i className="fa fa-pencil"></i> Edit</Link>
+                                                    <button className="btn btn-danger btn-sm me-1" onClick={() => handleDelete(item._id)}><i className="fa fa-trash"></i> Delete</button>
                                                 </td>
                                             </tr>
                                         ))}
@@ -88,7 +83,7 @@ const Blogs = () => {
                 <AdminFooter />
             </div>
         </>
-    );
+    )
 }
 
-export default Blogs;
+export default Icons

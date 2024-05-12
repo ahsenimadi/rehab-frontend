@@ -5,6 +5,7 @@ import ENV from '../config.json';
 import Preloader from '../components/Preloader';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import MetaTags from '../components/MetaTags';
 
 const SingleBlog = () => {
     const { slug } = useParams();
@@ -32,9 +33,15 @@ const SingleBlog = () => {
             setLoading(false);
         }, 500);
     }, [slug]);
+    const meta = { // Added meta object
+        title: blog.meta_title,
+        description: blog.meta_description,
+        keywords: blog.meta_keywords
+    };
     const htmlContent = blog.description
     return (
         <>
+            <MetaTags meta={meta} />
             {loading ? <Preloader /> : (
                 <>
                     <Header />

@@ -7,12 +7,11 @@ import ENV from '../config.json'
 import axios from 'axios';
 import InnerBanner from '../components/InnerBanner';
 import MetaTags from '../components/MetaTags';
-import ServiceIcon from '../components/ServiceIcon';
 
-const Services = () => {
-    const title = 'Our Services';
+const Studios = () => {
+    const title = 'Our Studio';
     const [meta, setMeta] = useState([]);
-    const [services, setservices] = useState([])
+    const [studios, setstudios] = useState([])
     const [loading, setLoading] = useState(true)
     const api = ENV.BASE_URL
     useEffect(() => {
@@ -20,20 +19,20 @@ const Services = () => {
             setLoading(false);
         }, 500);
 
-        const fetchServices = async () => {
+        const fetchStudio = async () => {
             try {
-                const response = await axios.get(api + 'services');
-                setservices(response.data);
+                const response = await axios.get(api + 'studios');
+                setstudios(response.data);
             } catch (error) {
-                console.log("Error fetching service:" + error);
+                console.log("Error fetching studio:" + error);
             }
         };
 
-        fetchServices();
+        fetchStudio();
 
         const fetchMeta = async () => {
             try {
-                const response = await axios.get(api + 'meta/page/services')
+                const response = await axios.get(api + 'meta/page/studios')
                 setMeta(response.data)
             } catch (error) {
                 console.log("Error fetching meta:" + error)
@@ -54,12 +53,12 @@ const Services = () => {
                     <InnerBanner title={title} />
                     <div className="container py-5">
                         <div className="row g-5 text-center justify-content-center">
-                            {services && services.map((item, index) => (
-                                <div className="col-6 col-sm-4 col-md-4 col-lg-2" key={index}>
-                                    <Link to={`/services/${item.slug}`} className="card service border-0 shadow-sm rounded-3">
+                            {studios && studios.map((item, index) => (
+                                <div className="col-6 col-sm-4 col-md-4" key={index}>
+                                    <Link to={`/studios/${item.slug}`} className="card studio border-0 shadow-sm rounded-3 h-100 text-decoration-none">
+                                        <img src={`${ENV.BASE_URL}${item.image}`} className='card-img-top' alt={item.name} />
                                         <div className="card-body">
-                                            <ServiceIcon icon={item.icon} />
-                                            <h6>{item.title}</h6>
+                                            <h5 className='text-first text-uppercase'>{item.title}</h5>
                                         </div>
                                     </Link>
                                 </div>
@@ -73,4 +72,4 @@ const Services = () => {
     )
 }
 
-export default Services
+export default Studios

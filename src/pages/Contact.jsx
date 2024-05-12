@@ -5,8 +5,10 @@ import Footer from '../components/Footer'
 import Preloader from '../components/Preloader'
 import axios from 'axios';
 import { BASE_URL } from '../config';
+import MetaTags from '../components/MetaTags'
 
 const Contact = () => {
+  const [meta, setMeta] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -20,6 +22,17 @@ const Contact = () => {
     setTimeout(() => {
       setLoading(false)
     }, 500);
+
+    const fetchMeta = async () => {
+      try {
+        const response = await axios.get(api + 'meta/page/contact')
+        setMeta(response.data)
+      } catch (error) {
+        console.log("Error fetching meta:" + error)
+      }
+    }
+
+    fetchMeta()
   }, [])
 
   const handleChange = e => {
@@ -51,6 +64,7 @@ const Contact = () => {
 
   return (
     <>
+      <MetaTags meta={meta} />
       {loading ? <Preloader /> : (
         <>
           <Header />

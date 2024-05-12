@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import logo from '../assets/images/logo_white.png';
 import LiveChatWidget from './LiveChatWidget';
+import whatsapp from '../assets/images/whatsapp.png';
 
 const Footer = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -175,8 +176,10 @@ const Footer = () => {
       <div className={`back-to-top ${isVisible ? 'visible' : ''}`} onClick={scrollToTop}>
         <i className="fa-solid fa-up-long"></i>
       </div>
+      <a href='https://api.whatsapp.com/send?phone=919849040000' className="whatsapp" target='_blank'>
+        <img src={whatsapp} alt="whatsapp" />
+      </a>
       <LiveChatWidget />
-
     </>
   )
 }

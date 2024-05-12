@@ -1,44 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import AdminHeader from '../../components/AdminHeader';
 import AdminSidebar from '../../components/AdminSidebar';
 import AdminFooter from '../../components/AdminFooter';
-import ENV from '../../config.json';
+import axios from 'axios';
+import ENV from '../../config.json'
+import { Link, useNavigate } from 'react-router-dom';
 
-const Blogs = () => {
-    const [blogs, setBlogs] = useState([]);
-    const [successMessage, setSuccessMessage] = useState('');
-    const api = ENV.BASE_URL + 'blogs';
-    const navigate = useNavigate();
+const Studios = () => {
+    const [studios, setstudios] = useState([])
+    const api = ENV.BASE_URL + 'studios'
 
     useEffect(() => {
-        const fetchBlogs = async () => {
+        const fetchstudio = async () => {
             try {
                 const response = await axios.get(api);
-                setBlogs(response.data);
+                setstudios(response.data);
             } catch (error) {
-                console.log('Error fetching blogs:', error);
+                console.log("Error fetching studio:" + error);
             }
         };
 
-        fetchBlogs();
-    }, [api]);
+        fetchstudio();
+    }, []);
 
     const handleDelete = async (slug) => {
         try {
             await axios.delete(api + '/' + slug);
-            setSuccessMessage('Blog deleted successfully');
-            setTimeout(() => {
-                // navigate('/admin/blogs');
-                location.reload()
-                setSuccessMessage('')
-            }, 2000);
+            useNavigate('/admin/studios')
         } catch (error) {
-            console.log("Error deleting blog: " + error);
+            console.log("Error deleting studio: " + error);
         }
     };
-
     return (
         <>
             <div>
@@ -48,10 +40,9 @@ const Blogs = () => {
                         <AdminSidebar />
                         <main className="col-md ms-sm-auto px-md-4">
                             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                                <h1 className="h2">Blogs list</h1>
+                                <h1 className="h2">Studios list</h1>
                             </div>
-                            {successMessage && <div className="alert alert-success mt-3">{successMessage}</div>}
-                            {blogs.length === 0 ? (
+                            {studios.length === 0 ? (
                                 <div className="alert alert-info">No data found yet</div>
                             ) : (
                                 <table className="table table-bordered">
@@ -66,7 +57,7 @@ const Blogs = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {blogs.map((item, index) => (
+                                        {studios.map((item, index) => (
                                             <tr key={index}>
                                                 <td>{index + 1}</td>
                                                 <td>{item.title}</td>
@@ -74,8 +65,8 @@ const Blogs = () => {
                                                 <td><img src={ENV.BASE_URL + item.image} alt="" width='100px' /></td>
                                                 <td>{item.posted_date}</td>
                                                 <td>
-                                                    <Link to={`/admin/blogs/edit/${item.slug}`} className="btn btn-info btn-sm me-1"><i className="fa fa-pencil"></i> Edit</Link>
-                                                    <button className="btn btn-danger btn-sm me-1" onClick={() => handleDelete(item.slug)}><i className="fa fa-trash"></i> Delete</button>
+                                                    <Link to={`/admin/studios/edit/${item.slug}`} className="btn btn-info btn-sm me-1"><i className="fa fa-pencil"></i> Edit</Link>
+                                                    <button onClick={() => handleDelete(item.slug)} className="btn btn-danger btn-sm me-1"><i className="fa fa-trash"></i> Delete</button>
                                                 </td>
                                             </tr>
                                         ))}
@@ -88,7 +79,7 @@ const Blogs = () => {
                 <AdminFooter />
             </div>
         </>
-    );
+    )
 }
 
-export default Blogs;
+export default Studios

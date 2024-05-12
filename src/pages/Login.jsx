@@ -4,8 +4,10 @@ import Footer from '../components/Footer'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Preloader from '../components/Preloader'
+import MetaTags from '../components/MetaTags'
 
 const Login = () => {
+    const [meta, setMeta] = useState([]);
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
     const [errMsg, setErrMsg] = useState(false)
@@ -21,6 +23,17 @@ const Login = () => {
         setTimeout(() => {
             setLoading(false)
         }, 500);
+
+        const fetchMeta = async () => {
+            try {
+                const response = await axios.get(api + 'meta/page/login')
+                setMeta(response.data)
+            } catch (error) {
+                console.log("Error fetching meta:" + error)
+            }
+        }
+
+        fetchMeta()
     }, [navigate])
 
     const checkUser = () => {
@@ -37,6 +50,7 @@ const Login = () => {
     }
     return (
         <>
+            <MetaTags meta={meta} />
             {loading ? <Preloader /> : (
                 <>
                     <Header />

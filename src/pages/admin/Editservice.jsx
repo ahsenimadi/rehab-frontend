@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -8,34 +8,49 @@ import AdminSidebar from '../../components/AdminSidebar';
 import AdminFooter from '../../components/AdminFooter';
 import ENV from '../../config.json';
 
-const Editservice = () => {
+const EditService = () => {
     const { slug } = useParams();
     const [service, setService] = useState({
         title: '',
         description: '',
         short: '',
         image: '',
+        icon: '',
         meta_title: '',
         meta_description: '',
         meta_keywords: ''
     });
-    const api = ENV.BASE_URL + 'services/';
+    const api = ENV.BASE_URL;
 
     const [successMessage, setSuccessMessage] = useState('');
     const navigate = useNavigate();
+    const [icons, setIcons] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchService = async () => {
+        const fetchServiceData = async () => {
             try {
-                const response = await axios.get(`${api}${slug}`);
+                const response = await axios.get(`${api}services/${slug}`);
                 setService(response.data);
             } catch (error) {
-                console.log('Error fetching service:', error);
+                console.error('Error fetching service:', error);
+            }
+            setLoading(false);
+        };
+
+        fetchServiceData();
+
+        const fetchIconData = async () => {
+            try {
+                const response = await axios.get(api + 'icons/');
+                setIcons(response.data);
+            } catch (error) {
+                console.error('Error fetching icons:', error);
             }
         };
 
-        fetchService();
-    }, []); // Listen for changes in slug
+        fetchIconData();
+    }, [api, slug]);
 
     const handleChange = (e) => {
         setService({ ...service, [e.target.name]: e.target.value });
@@ -53,17 +68,42 @@ const Editservice = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.put(`${api}${slug}`, service);
-            setSuccessMessage('Service created successfully');
+            function slugify(title) {
+                return title.toLowerCase().replace(/\s+/g, '-');
+            }
+            const form = new FormData();
+            form.append('title', service.title);
+            form.append('description', service.description);
+            form.append('short', service.short);
+            form.append('icon', service.icon);
+            form.append('slug', slugify(service.title));
+            form.append('meta_title', service.meta_title);
+            form.append('meta_description', service.meta_description);
+            form.append('meta_keywords', service.meta_keywords);
+            if (service.image) {
+                form.append('image', service.image);
+            }
+            if (service.thumbnail) {
+                form.append('thumbnail', service.thumbnail);
+            }
+            await axios.put(`${api}services/${slug}`, form);
+            setSuccessMessage('Service updated successfully');
             setTimeout(() => {
                 navigate('/admin/services');
             }, 2000);
         } catch (error) {
-            console.log('Error updating service:', error);
+            console.error('Error updating service:', error);
         }
     };
+
+    const memoizedIcons = useMemo(() => {
+        return icons.map((item, index) => (
+            <option value={item._id} key={index}>{item.name}</option>
+        ));
+    }, [icons]);
+
     return (
-        <div>
+        <>
             <AdminHeader />
             <div className='container-fluid bg-light dashboard'>
                 <div className="row">
@@ -72,57 +112,72 @@ const Editservice = () => {
                         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                             <h1 className="h2">Edit Service</h1>
                         </div>
-                        <div className="card">
-                            <div className="card-body">
-                                <form onSubmit={handleSubmit}>
-                                    <div className="form-group mb-3">
-                                        <label>Title</label>
-                                        <input type="text" className="form-control" name='title' value={service.title} onChange={handleChange} />
-                                    </div>
-                                    <div className="form-group mb-3">
-                                        <label>Description</label>
-                                        <CKEditor
-                                            editor={ClassicEditor}
-                                            name='description'
-                                            data={service.description}
-                                            onChange={handleDescriptionChange}
-                                        />
-                                    </div>
-                                    <div className="form-group mb-3">
-                                        <label>Short description</label>
-                                        <input type="text" className="form-control" name='short' value={service.short} onChange={handleChange} />
-                                    </div>
-                                    <div className="col-md-6">
+                        {loading ? (
+                            <p>Loading...</p>
+                        ) : (
+                            <div className="card">
+                                <div className="card-body">
+                                    <form onSubmit={handleSubmit} encType='multipart/form-data'>
                                         <div className="form-group mb-3">
-                                            <label>Image</label>
-                                            <input type="file" className="form-control" name='image' accept='.png, .jpg, .jpeg' onChange={handlePhoto} />
+                                            <label>Title</label>
+                                            <input type="text" className="form-control" name='title' value={service.title} onChange={handleChange} />
                                         </div>
-                                    </div>
-                                    <hr />
-                                    <h4>SEO meta tags</h4>
-                                    <div className="form-group mb-3">
-                                        <label>Meta Title</label>
-                                        <input type="text" className="form-control" name='meta_title' value={service.meta_title} onChange={handleChange} />
-                                    </div>
-                                    <div className="form-group mb-3">
-                                        <label>Meta Description</label>
-                                        <input type="text" className="form-control" name='meta_description' value={service.meta_description} onChange={handleChange} />
-                                    </div>
-                                    <div className="form-group mb-3">
-                                        <label>Meta Keywords</label>
-                                        <input type="text" className="form-control" name='meta_keywords' value={service.meta_keywords} onChange={handleChange} />
-                                    </div>
-                                    <button type='submit' className="btn btn-success">Update</button>
-                                </form>
-                                {successMessage && <div className="alert alert-success mt-3">{successMessage}</div>}
+                                        <div className="form-group mb-3">
+                                            <label>Description</label>
+                                            <CKEditor
+                                                editor={ClassicEditor}
+                                                name='description'
+                                                data={service.description}
+                                                onChange={handleDescriptionChange}
+                                            />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <label>Short description</label>
+                                            <input type="text" className="form-control" name='short' value={service.short} onChange={handleChange} />
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-md-6">
+                                                <div className="form-group mb-3">
+                                                    <label>Image</label>
+                                                    <input type="file" className="form-control" name='image' accept='.png, .jpg, .jpeg' onChange={handlePhoto} />
+                                                </div>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <div className="form-group mb-3">
+                                                    <label>Thumbnail icon</label>
+                                                    <select name="icon" className='form-control custom-select' value={service.icon} onChange={handleChange}>
+                                                        <option value="">Select icon</option>
+                                                        {memoizedIcons}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <h4>SEO meta tags</h4>
+                                        <div className="form-group mb-3">
+                                            <label>Meta Title</label>
+                                            <input type="text" className="form-control" name='meta_title' value={service.meta_title} onChange={handleChange} />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <label>Meta Description</label>
+                                            <input type="text" className="form-control" name='meta_description' value={service.meta_description} onChange={handleChange} />
+                                        </div>
+                                        <div className="form-group mb-3">
+                                            <label>Meta Keywords</label>
+                                            <input type="text" className="form-control" name='meta_keywords' value={service.meta_keywords} onChange={handleChange} />
+                                        </div>
+                                        <button type='submit' className="btn btn-success">Update</button>
+                                    </form>
+                                    {successMessage && <div className="alert alert-success mt-3">{successMessage}</div>}
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </main>
                 </div>
             </div>
             <AdminFooter />
-        </div>
-    )
-}
+        </>
+    );
+};
 
-export default Editservice
+export default EditService;

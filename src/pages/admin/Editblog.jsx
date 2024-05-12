@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom'; // Import useParams hook
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import AdminHeader from '../../components/AdminHeader';
 import AdminSidebar from '../../components/AdminSidebar';
@@ -7,7 +9,7 @@ import AdminFooter from '../../components/AdminFooter';
 import ENV from '../../config.json';
 
 const Editblog = () => {
-    const { slug } = useParams(); // Get slug from URL params using useParams
+    const { slug } = useParams();
     const [blog, setBlog] = useState({
         title: '',
         description: '',
@@ -31,17 +33,26 @@ const Editblog = () => {
         };
 
         fetchBlog();
-    }, [slug]); // Listen for changes in slug
+    }, [slug]);
 
     const handleChange = (e) => {
         setBlog({ ...blog, [e.target.name]: e.target.value });
+    };
+
+    const handlePhoto = (e) => {
+        setBlog({ ...blog, image: e.target.files[0] });
+    };
+
+    const handleDescriptionChange = (event, editor) => {
+        const data = editor.getData();
+        setBlog({ ...blog, description: data });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             await axios.put(`${api}${slug}`, blog);
-            setSuccessMessage('Blog created successfully');
+            setSuccessMessage('Blog updated successfully');
             setTimeout(() => {
                 navigate('/admin/blogs');
             }, 2000);
@@ -70,7 +81,12 @@ const Editblog = () => {
                                         </div>
                                         <div className="form-group mb-3">
                                             <label>Description</label>
-                                            <textarea className="form-control" name='description' value={blog.description} onChange={handleChange} />
+                                            <CKEditor
+                                                editor={ClassicEditor}
+                                                name='description'
+                                                data={blog.description}
+                                                onChange={handleDescriptionChange}
+                                            />
                                         </div>
                                         <div className="form-group mb-3">
                                             <label>Meta Title</label>

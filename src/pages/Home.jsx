@@ -9,6 +9,8 @@ import user from '../assets/images/user.png'
 import Preloader from '../components/Preloader';
 import ENV from '../config.json'
 import { Link } from 'react-router-dom';
+import MetaTags from '../components/MetaTags';
+import ServiceIcon from '../components/ServiceIcon';
 
 const Home = () => {
   const [services, setservices] = useState([])
@@ -26,6 +28,7 @@ const Home = () => {
   const [returning, setReturning] = useState(0)
   const [loading, setLoading] = useState(true)
   const [blogs, setBlogs] = useState()
+  const [meta, setMeta] = useState([])
 
   const iframeProps = {
     allowFullScreen: true,
@@ -43,6 +46,17 @@ const Home = () => {
     setTimeout(() => {
       setLoading(false);
     }, 500);
+
+    const fetchMeta = async () => {
+      try {
+        const response = await axios.get(api + 'meta/page/home')
+        setMeta(response.data)
+      } catch (error) {
+        console.log("Error fetching meta:" + error)
+      }
+    }
+
+    fetchMeta()
 
     const fetchServices = async () => {
       try {
@@ -107,6 +121,7 @@ const Home = () => {
 
   return (
     <>
+      <MetaTags meta={meta} />
       {loading ? <Preloader /> : (
         <>
           <Header />
@@ -165,7 +180,7 @@ const Home = () => {
                     <div className="col-6 col-sm-4 col-md-4 col-lg-2" key={index}>
                       <Link to={`services/${item.slug}`} className="card service border-0 shadow-sm rounded-3">
                         <div className="card-body">
-                          <img src={ENV.BASE_URL + item.image} className='service-icon' alt="neuro" />
+                          <ServiceIcon icon={item.icon} />
                           <h6>{item.title}</h6>
                         </div>
                       </Link>

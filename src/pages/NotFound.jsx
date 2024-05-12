@@ -1,13 +1,31 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import InnerBanner from '../components/InnerBanner'
 import Footer from '../components/Footer'
 import { Link } from 'react-router-dom'
+import MetaTags from '../components/MetaTags';
 
 const NotFound = () => {
     const title = 'Page not found';
+    const [meta, setMeta] = useState([])
+
+    useEffect(() => {
+        const fetchMeta = async () => {
+            try {
+                const response = await axios.get(api + 'meta/page/notfound')
+                setMeta(response.data)
+            } catch (error) {
+                console.log("Error fetching meta:" + error)
+            }
+        }
+
+        fetchMeta()
+
+    }, [])
+
     return (
         <>
+            <MetaTags meta={meta} />
             {/* <Header />
             <InnerBanner title={title} /> */}
             <div className='d-flex align-items-center vh-100'>

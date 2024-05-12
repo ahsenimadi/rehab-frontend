@@ -26,6 +26,18 @@ const AdminSidebar = () => {
                         <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span className="db-iconbox">
+                                    <i className="fa-solid fa-tags"></i>
+                                </span>
+                                {toggleSidebar === false ? 'Meta' : ''}
+                            </a>
+                            <ul className="dropdown-menu w-100">
+                                <li><Link className="dropdown-item" to="/admin/metas/add">Add Meta</Link></li>
+                                <li><Link className="dropdown-item" to="/admin/metas">Metas List</Link></li>
+                            </ul>
+                        </li>
+                        <li className="nav-item dropdown">
+                            <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span className="db-iconbox">
                                     <i className="fa-solid fa-blog"></i>
                                 </span>
                                 {toggleSidebar === false ? 'Blog' : ''}
@@ -45,6 +57,42 @@ const AdminSidebar = () => {
                             <ul className="dropdown-menu w-100">
                                 <li><Link className="dropdown-item" to="/admin/services/add">Add Service</Link></li>
                                 <li><Link className="dropdown-item" to="/admin/services">Services List</Link></li>
+                            </ul>
+                        </li>
+                        <li className="nav-item dropdown">
+                            <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span className="db-iconbox">
+                                    <i className="fa-brands fa-servicestack"></i>
+                                </span>
+                                {toggleSidebar === false ? 'Studios' : ''}
+                            </a>
+                            <ul className="dropdown-menu w-100">
+                                <li><Link className="dropdown-item" to="/admin/studios/add">Add Studio</Link></li>
+                                <li><Link className="dropdown-item" to="/admin/studios">Studios List</Link></li>
+                            </ul>
+                        </li>
+                        <li className="nav-item dropdown">
+                            <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span className="db-iconbox">
+                                    <i className="fa-solid fa-images"></i>
+                                </span>
+                                {toggleSidebar === false ? 'Gallery' : ''}
+                            </a>
+                            <ul className="dropdown-menu w-100">
+                                <li><Link className="dropdown-item" to="/admin/gallery/add">Add Gallery</Link></li>
+                                <li><Link className="dropdown-item" to="/admin/gallery">Gallery List</Link></li>
+                            </ul>
+                        </li>
+                        <li className="nav-item dropdown">
+                            <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span className="db-iconbox">
+                                    <i className="fa-solid fa-images"></i>
+                                </span>
+                                {toggleSidebar === false ? 'Icons' : ''}
+                            </a>
+                            <ul className="dropdown-menu w-100">
+                                <li><Link className="dropdown-item" to="/admin/icons/add">Add Icon</Link></li>
+                                <li><Link className="dropdown-item" to="/admin/icons">Icons List</Link></li>
                             </ul>
                         </li>
                         <li className="nav-item">
